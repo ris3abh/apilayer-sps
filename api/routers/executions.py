@@ -124,25 +124,41 @@ async def start_execution(
         
         # Prepare inputs for CrewAI crew
         crew_inputs = {
+            # Required crew inputs
             "topic": project.topic,
             "client_name": project.client.client_name,
             "content_type": project.content_type,
             "audience": project.audience,
-            "ai_language_code": project.ai_language_code,
-            "brand_guidelines": project.client.brand_guidelines,
-            "target_audience": project.client.target_audience,
-            "industry": project.client.industry,
+            "ai_language_code": project.ai_language_code or "/TN/A3,P4/VL4/SC3/FL2",
+            "workflow_mode": request.workflow_mode.value,
+            
+            # Additional fields for S3 access
+            "client_id": str(project.client_id),
+            
+            # MISSING FIELDS - Add defaults for creation mode
+            "content_length": "1500",
+            "initial_draft": "",
+            "draft_source": "none",
+            "draft_length": "0",
+            "draft_word_count": "0",
         }
         
         # Add workflow-specific inputs
         if request.workflow_mode == WorkflowModeEnum.REVISION:
-            crew_inputs["previous_output_s3_key"] = request.previous_output_s3_key
-            crew_inputs["revision_instructions"] = request.revision_instructions
+            crew_inputs["initial_draft"] = request.initial_draft or ""
+            crew_inputs["draft_source"] = "human"
+            crew_inputs["draft_length"] = str(len(request.initial_draft or ""))
+            crew_inputs["draft_word_count"] = str(len((request.initial_draft or "").split()))
+            crew_inputs["revision_instructions"] = request.revision_instructions or ""
         elif request.workflow_mode == WorkflowModeEnum.REPURPOSE:
-            crew_inputs["previous_output_s3_key"] = request.previous_output_s3_key
+            crew_inputs["initial_draft"] = ""
+            crew_inputs["draft_source"] = "ai_generated"
         
-        logger.info(f"📋 Crew inputs prepared")
+        
         logger.debug(f"Inputs: {crew_inputs}")
+        logger.info(f"📋 Crew inputs prepared")
+        logger.info(f"   Required crew inputs: {list(crew_inputs.keys())}")
+        logger.debug(f"   Full inputs: {crew_inputs}")
         
         # Call CrewAI kickoff
         try:
@@ -183,7 +199,9 @@ async def start_execution(
             )
             
         except Exception as e:
-            logger.error(f"❌ CrewAI kickoff failed: {str(e)}")
+            logger.error(f"❌ CrewAI kickoff failed: {str(e)}", exc_info=True)
+            logger.error(f"Exception type: {type(e).__name__}")
+            logger.error(f"Full error: {repr(e)}")
             
             # Update execution status to failed
             execution.status = ExecutionStatus.FAILED
