@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpinScribe HITL Dashboard</title>
+    <style>
+        /* ================================================================= */
+        /* GLOBAL STYLES */
+        /* ================================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --white: #ffffff;
+            --border: #dfe6e9;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ================================================================= */
+        /* HEADER */
+        /* ================================================================= */
+        .header {
+            background: var(--white);
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .logo {
+            font-size: 32px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: var(--light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-badge.pending {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .stat-badge.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* ================================================================= */
+        /* MAIN CONTENT AREA */
+        /* ================================================================= */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ================================================================= */
+        /* APPROVAL CARDS */
+        /* ================================================================= */
+        .approvals-section {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .refresh-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .approval-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .approval-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .approval-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .approval-card.high-priority::before {
+            background: var(--danger);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .checkpoint-badge {
+            background: var(--primary);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .checkpoint-badge.brand_voice {
+            background: #9b59b6;
+        }
+
+        .checkpoint-badge.style_compliance {
+            background: #3498db;
+        }
+
+        .checkpoint-badge.final_qa {
+            background: #e74c3c;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--gray);
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-description {
+            color: var(--gray);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .content-preview {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-approve:hover {
+            background: #229954;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+        }
+
+        .btn-view {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        /* ================================================================= */
+        /* SIDEBAR - ACTIVITY FEED */
+        /* ================================================================= */
+        .sidebar {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .activity-feed {
+            margin-top: 20px;
+        }
+
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        .activity-icon {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        /* ================================================================= */
+        /* EMPTY STATE */
+        /* ================================================================= */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        /* ================================================================= */
+        /* MODAL */
+        /* ================================================================= */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* ================================================================= */
+        /* LOADING & NOTIFICATIONS */
+        /* ================================================================= */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .spinner {
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: var(--white);
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ================================================================= */
+        /* AUTO-REFRESH INDICATOR */
+        /* ================================================================= */
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span class="logo">🚀</span>
+                SpinScribe HITL Dashboard
+            </h1>
+            <div class="stats">
+                <div class="stat-badge pending">
+                    <span>⏳</span>
+                    <span>Pending: <span class="stat-number" id="pendingCount">0</span></span>
+                </div>
+                <div class="stat-badge active">
+                    <span>⚡</span>
+                    <span>Active: <span class="stat-number" id="activeCount">0</span></span>
+                </div>
+                <div class="auto-refresh">
+                    <div class="pulse"></div>
+                    <span>Auto-refresh every 10s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Approvals Section -->
+            <div class="approvals-section">
+                <div class="section-header">
+                    <h2 class="section-title">Pending Approvals</h2>
+                    <button class="refresh-btn" onclick="loadApprovals()">
+                        <span>🔄</span>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+                
+                <div id="approvalsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading approvals...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar - Activity Feed -->
+            <div class="sidebar">
+                <h3 class="section-title">Recent Activity</h3>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <div class="activity-time">Just now</div>
+                        <div class="activity-text">
+                            <span class="activity-icon">📊</span>
+                            Dashboard loaded
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approval Modal -->
+    <div class="modal" id="approvalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Approve Content</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Decision</label>
+                    <select class="form-input" id="decisionSelect">
+                        <option value="approve">✅ Approve - Proceed to next stage</option>
+                        <option value="reject">❌ Reject - Restart from this checkpoint</option>
+                        <option value="revise">🔄 Revise - Minor changes needed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Feedback (required)</label>
+                    <textarea 
+                        class="form-textarea" 
+                        id="feedbackText" 
+                        placeholder="Provide feedback for the agent..."
+                        required
+                    ></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your Name (optional)</label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        id="reviewerName" 
+                        placeholder="John Doe"
+                    />
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-approve" onclick="submitDecision()">
+                        <span>✓</span>
+                        <span>Submit Decision</span>
+                    </button>
+                    <button class="btn btn-reject" onclick="closeModal()">
+                        <span>✕</span>
+                        <span>Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // ================================================================
+        // GLOBAL STATE
+        // ================================================================
+        let currentApproval = null;
+        let refreshInterval = null;
+
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApprovals();
+            startAutoRefresh();
+        });
+
+        // ================================================================
+        // AUTO-REFRESH
+        // ================================================================
+        function startAutoRefresh() {
+            refreshInterval = setInterval(() => {
+                loadApprovals(true); // Silent refresh
+            }, 10000); // Every 10 seconds
+        }
+
+        // ================================================================
+        // LOAD APPROVALS
+        // ================================================================
+        async function loadApprovals(silent = false) {
+            const container = document.getElementById('approvalsContainer');
+            
+            if (!silent) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading approvals...</p>
+                    </div>
+                `;
+            }
+
+            try {
+                const response = await fetch('/approvals/pending');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch approvals');
+                }
+
+                const approvals = await response.json();
+                
+                // Update stats
+                document.getElementById('pendingCount').textContent = approvals.length;
+                
+                if (approvals.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✅</div>
+                            <h3>All Clear!</h3>
+                            <p>No pending approvals at this time.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render approval cards
+                container.innerHTML = approvals.map(approval => renderApprovalCard(approval)).join('');
+                
+                // Add to activity feed if not silent
+                if (!silent) {
+                    addActivity(`📥 Loaded ${approvals.length} pending approval(s)`);
+                }
+
+            } catch (error) {
+                console.error('Error loading approvals:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <h3>Error Loading Data</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                showNotification('Failed to load approvals', 'error');
+            }
+        }
+
+        // ================================================================
+        // RENDER APPROVAL CARD
+        // ================================================================
+        function renderApprovalCard(approval) {
+            const priority = approval.priority || 'normal';
+            const checkpoint = approval.checkpoint_type || approval.checkpoint;
+            const contentPreview = approval.content ? approval.content.substring(0, 300) : 'No content preview';
+            
+            return `
+                <div class="approval-card ${priority === 'high' ? 'high-priority' : ''}">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">${approval.title || 'Untitled Approval'}</h3>
+                        </div>
+                        <span class="checkpoint-badge ${checkpoint}">${checkpoint?.replace('_', ' ') || 'unknown'}</span>
+                    </div>
+                    
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <span>🏢</span>
+                            <span>${approval.client_name || 'Unknown Client'}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>📝</span>
+                            <span>${approval.topic || 'Unknown Topic'}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>⏰</span>
+                            <span>${formatTimestamp(approval.created_at)}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-description">${approval.description || ''}</p>
+                    
+                    <details>
+                        <summary style="cursor: pointer; font-weight: 600; margin-bottom: 10px;">
+                            👁️ View Content Preview
+                        </summary>
+                        <div class="content-preview">${contentPreview}...</div>
+                    </details>
+                    
+                    <div class="card-actions">
+                        <button class="btn btn-approve" onclick="openApprovalModal('${approval.workflow_id}', 'approve')">
+                            <span>✓</span>
+                            <span>Approve</span>
+                        </button>
+                        <button class="btn btn-reject" onclick="openApprovalModal('${approval.workflow_id}', 'reject')">
+                            <span>✕</span>
+                            <span>Reject</span>
+                        </button>
+                        <button class="btn btn-view" onclick="openApprovalModal('${approval.workflow_id}', 'revise')">
+                            <span>🔄</span>
+                            <span>Revise</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================================================================
+        // MODAL FUNCTIONS
+        // ================================================================
+        async function openApprovalModal(workflowId, suggestedDecision = 'approve') {
+            try {
+                // Fetch workflow details
+                const response = await fetch(`/workflows/${workflowId}`);
+                const workflow = await response.json();
+                
+                currentApproval = workflow;
+                
+                // Set modal title
+                document.getElementById('modalTitle').textContent = 
+                    `Review: ${workflow.client_name} - ${workflow.topic}`;
+                
+                // Set suggested decision
+                document.getElementById('decisionSelect').value = suggestedDecision;
+                
+                // Show modal
+                document.getElementById('approvalModal').classList.add('active');
+                
+            } catch (error) {
+                console.error('Error opening modal:', error);
+                showNotification('Failed to load approval details', 'error');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('approvalModal').classList.remove('active');
+            document.getElementById('feedbackText').value = '';
+            document.getElementById('reviewerName').value = '';
+            currentApproval = null;
+        }
+
+        // ================================================================
+        // SUBMIT DECISION
+        // ================================================================
+        async function submitDecision() {
+            if (!currentApproval) {
+                showNotification('No approval selected', 'error');
+                return;
+            }
+
+            const decision = document.getElementById('decisionSelect').value;
+            const feedback = document.getElementById('feedbackText').value.trim();
+            const reviewerName = document.getElementById('reviewerName').value.trim();
+
+            if (!feedback) {
+                showNotification('Please provide feedback', 'error');
+                return;
+            }
+
+            const payload = {
+                decision: decision,
+                checkpoint: currentApproval.checkpoint_type,
+                feedback: feedback,
+                reviewer_name: reviewerName || 'Anonymous',
+                comments: feedback
+            };
+
+            try {
+                const response = await fetch(`/approvals/${currentApproval.workflow_id}/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit decision');
+                }
+
+                const result = await response.json();
+                
+                showNotification(`Decision submitted: ${decision}`, 'success');
+                addActivity(`${getDecisionIcon(decision)} ${decision.toUpperCase()}: ${currentApproval.client_name}`);
+                
+                closeModal();
+                
+                // Reload approvals after 1 second
+                setTimeout(() => loadApprovals(), 1000);
+
+            } catch (error) {
+                console.error('Error submitting decision:', error);
+                showNotification('Failed to submit decision', 'error');
+            }
+        }
+
+        // ================================================================
+        // UTILITY FUNCTIONS
+        // ================================================================
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes} min ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            const days = Math.floor(hours / 24);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        }
+
+        function getDecisionIcon(decision) {
+            switch (decision) {
+                case 'approve': return '✅';
+                case 'reject': return '❌';
+                case 'revise': return '🔄';
+                default: return '📝';
+            }
+        }
+
+        function addActivity(text) {
+            const feed = document.getElementById('activityFeed');
+            const now = new Date().toLocaleTimeString();
+            
+            const activityHTML = `
+                <div class="activity-item">
+                    <div class="activity-time">${now}</div>
+                    <div class="activity-text">${text}</div>
+                </div>
+            `;
+            
+            feed.insertAdjacentHTML('afterbegin', activityHTML);
+            
+            // Keep only last 10 activities
+            const items = feed.querySelectorAll('.activity-item');
+            if (items.length > 10) {
+                items[items.length - 1].remove();
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ================================================================
+        // KEYBOARD SHORTCUTS
+        // ================================================================
+        document.addEventListener('keydown', (e) => {
+            // ESC to close modal
+            if (e.key === 'Escape' && document.getElementById('approvalModal').classList.contains('active')) {
+                closeModal();
+            }
+            
+            // R to refresh
+            if (e.key === 'r' && !e.ctrlKey && !e.metaKey) {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+                    loadApprovals();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

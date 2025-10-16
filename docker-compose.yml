@@ -1,0 +1,89 @@
+# =============================================================================
+# SPINSCRIBE - LOCAL DEVELOPMENT STACK
+# =============================================================================
+# Provides PostgreSQL + Redis + pgAdmin for local development
+# Run: docker-compose up -d
+# Stop: docker-compose down
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # PostgreSQL Database
+  # ===========================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: spinscribe-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: spinscribe
+      POSTGRES_USER: spinscribe_admin
+      POSTGRES_PASSWORD: spinscribe_dev_password_123
+      # Removed PGDATA - use default location to avoid permission issues
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spinscribe_admin -d spinscribe"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - spinscribe-network
+
+  # ===========================================================================
+  # Redis Cache
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: spinscribe-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - spinscribe-network
+
+  # ===========================================================================
+  # pgAdmin (Optional - Database Management UI)
+  # ===========================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: spinscribe-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@spinscribe.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - spinscribe-network
+
+# =============================================================================
+# Volumes (Persistent Data)
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  spinscribe-network:
+    driver: bridge

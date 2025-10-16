@@ -1,0 +1,53 @@
+[project]
+name = "spinscribe"
+version = "0.1.0"
+description = "Multi-client AI content creation system with HITL protocol and brand voice compliance"
+authors = [{ name = "Spniutech Team", email = "dev@spniutech.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    # Core CrewAI with tools
+    "crewai[tools]>=0.201.1,<1.0.0",
+    
+    # PDF and Document Processing for client knowledge bases
+    "pypdf>=3.17.0",
+    "pdfplumber>=0.11.0",
+    
+    # Environment and Configuration
+    "python-dotenv>=1.0.0",
+    
+    # Structured Output Validation (for content templates)
+    "pydantic[email]>=2.0.0",
+    
+    # Data Processing (for CSV/Excel content analysis)
+    "pandas>=2.0.0",
+    "openpyxl>=3.1.0",
+    
+    # FastAPI Backend Dependencies
+    "fastapi>=0.118.0",
+    "uvicorn[standard]>=0.37.0",
+    "sqlalchemy>=2.0.44",
+    "pydantic-settings>=2.11.0",
+    "psycopg2-binary>=2.9.11",
+    "boto3>=1.40.49",
+    "python-jose[cryptography]>=3.5.0",
+    "httpx>=0.28.1",
+    "python-multipart>=0.0.20",
+    "redis>=5.0.0",
+]
+
+[project.scripts]
+spinscribe = "spinscribe.main:run"
+run_crew = "spinscribe.main:run"
+train = "spinscribe.main:train"
+replay = "spinscribe.main:replay"
+test = "spinscribe.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spinscribe"]
+
+[tool.crewai]
+type = "crew"

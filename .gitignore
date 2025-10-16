@@ -1,0 +1,7 @@
+# Environment files - NEVER COMMIT THESE
+.env
+.env.*
+*.env
+.env.backup
+.env.local
+.env.*.local

@@ -1,0 +1,1744 @@
+# =============================================================================
+# SPINSCRIBE CONTENT CREATION SYSTEM - TASKS CONFIGURATION
+# Cloud-Ready with Dual Workflow Support
+# =============================================================================
+#
+# WORKFLOW MODES:
+# 1. CREATION MODE - Build content from scratch (no initial_draft provided)
+# 2. REVISION MODE - Enhance existing draft (initial_draft provided)
+#
+# Mode is automatically detected via @before_kickoff in crew.py based on
+# presence of initial_draft input. Tasks adapt their approach accordingly.
+#
+# WORKFLOW STAGES:
+# 1. Content Research/Analysis → Research OR analyze existing draft
+# 2. Brand Voice Analysis → Extract and validate style
+# 3. Content Strategy → Create outline OR refinement plan
+# 4. Content Generation → Write draft OR enhance existing
+# 5. SEO Optimization → Optimize for search
+# 6. Style Compliance → Verify brand voice
+# 7. Quality Assurance → Final review
+#
+# CLOUD DEPLOYMENT NOTES:
+# - No local file system access (DirectorySearchTool removed)
+# - Knowledge passed via inputs or loaded from S3 in crew.py
+# - All references to client_knowledge_directory are informational
+# - Tools: SerperDevTool only (web search)
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# TASK 1: CONTENT RESEARCH & ANALYSIS (MODE-ADAPTIVE)
+# Purpose: Research topic OR analyze existing draft with targeted research
+# Agent: content_researcher
+# Dependencies: None
+# -----------------------------------------------------------------------------
+content_research_task:
+  description: >
+    Conduct comprehensive research and analysis for {client_name}'s {content_type}
+    on {topic} targeting {audience}.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    Your approach adapts based on workflow mode:
+    
+    **IF REVISION MODE** (initial_draft provided):
+    You have been provided with an existing draft to analyze and enhance.
+    Your mission is to analyze this draft and conduct targeted research to
+    elevate it to exceptional quality.
+    
+    INITIAL DRAFT: {initial_draft}
+    Draft Statistics: {draft_word_count} words, {draft_length} characters
+    Draft Source: {draft_source}
+    
+    REVISION MODE TASKS:
+    
+    1. COMPREHENSIVE DRAFT ANALYSIS
+       - Evaluate current organization and flow
+       - Identify strong sections to preserve
+       - Flag weak or incomplete sections
+       - Assess logical progression of ideas
+       - Check heading hierarchy effectiveness
+       - Note structural gaps or redundancies
+       - Evaluate depth of coverage for {topic}
+       - Identify claims lacking support/evidence
+       - Check quality of existing examples
+       - Assess technical accuracy
+       - Note outdated information
+       - Identify vague or generic statements
+       - Flag unclear or confusing sections
+       - Review quality of cited sources
+       - Identify uncited claims needing sources
+       - Check source currency and authority
+    
+    2. AUDIENCE & VALUE ASSESSMENT
+       - Does content address {audience} appropriately?
+       - Are pain points adequately covered?
+       - Is technical level right for audience?
+       - Does it provide actionable insights?
+       - What unique value does it offer?
+       - Where could value be enhanced?
+    
+    3. COMPETITIVE GAP ANALYSIS
+       - How does this compare to top competitors?
+       - What unique angles does it take?
+       - What are competitors covering that this misses?
+       - Where can we differentiate further?
+    
+    4. TARGETED ENHANCEMENT RESEARCH
+       - Research topics/angles the draft misses
+       - Find data for unsupported claims
+       - Locate better examples than current ones
+       - Discover recent developments not covered
+       - Identify trending subtopics to add
+       - Find authoritative sources for weak claims
+       - Locate compelling statistics to add impact
+       - Find expert perspectives to add credibility
+       - Discover case studies to illustrate points
+       - Research better analogies/explanations
+       - Find unique data/insights competitors lack
+       - Research angles competitors haven't covered
+       - Identify emerging trends for thought leadership
+       - Verify all existing statistics are current
+       - Check if any information is outdated
+       - Find more recent sources where needed
+       - Validate technical accuracy of claims
+    
+    5. SEO RESEARCH FOR OPTIMIZATION
+       - Identify primary & secondary keywords for {topic}
+       - Research search intent patterns
+       - Find featured snippet opportunities
+       - Identify LSI keywords to strengthen relevance
+       - Analyze top-ranking competitor content
+    
+    **IF CREATION MODE** (no initial_draft):
+    Build a complete research foundation for creating exceptional content from scratch.
+    
+    CREATION MODE TASKS:
+    
+    1. TOPIC ANALYSIS
+       - Current trends and developments (last 12 months)
+       - Key statistics and data points
+       - Expert opinions and perspectives
+       - Common misconceptions to address
+       - Emerging developments and future outlook
+       - Core concepts that must be explained
+    
+    2. COMPETITIVE INTELLIGENCE
+       - Identify top 3-5 competing content pieces
+       - Note their structures and approaches
+       - Find content gaps and opportunities
+       - Identify areas where client can provide unique value
+       - Analyze what's working in top-ranking content
+    
+    3. SOURCE QUALITY
+       - Prioritize authoritative sources
+       - Industry reports and studies
+       - Academic research and peer-reviewed articles
+       - Expert interviews and thought leader content
+       - Government and regulatory publications
+       - Credible news sources and trade publications
+    
+    4. SEO RESEARCH
+       - Primary and secondary keywords
+       - Related search queries and LSI keywords
+       - Search intent patterns
+       - Featured snippet opportunities
+       - Current ranking content analysis
+    
+    5. CONTENT BUILDING BLOCKS
+       - Statistics and data points to cite (minimum 5)
+       - Expert quotes to reference (minimum 3)
+       - Case studies or examples (minimum 2)
+       - Related keyword opportunities
+    
+    **COMMON TASKS (BOTH MODES):**
+    
+    Use web search tools to:
+    - Gather current statistics and expert insights
+    - Analyze competitor content approaches
+    - Identify trending discussions in the space
+    - Find authoritative sources and citations
+    - Research search intent and keyword opportunities
+    
+    Reference client context from inputs:
+    - Brand positioning and differentiators
+    - Target audience insights
+    - Previous successful content patterns
+    - Client-specific terminology preferences
+    
+  expected_output: >
+    A comprehensive research report in markdown format that adapts to workflow mode:
+    
+    **REVISION MODE OUTPUT** (if initial_draft provided):
+    
+    # Draft Analysis & Enhancement Research Report
+    
+    ## 1. EXECUTIVE SUMMARY
+    - Draft Quality Assessment: [Excellent/Good/Fair/Needs Significant Work]
+    - Primary Strengths: [3-5 bullet points]
+    - Primary Weaknesses: [3-5 bullet points]
+    - Recommended Approach: [Strategic direction]
+    
+    ## 2. DETAILED DRAFT ANALYSIS
+    
+    ### Structural Analysis
+    - Current Structure: [outline of existing structure]
+    - What Works: [sections/elements to preserve]
+    - What Doesn't Work: [sections needing restructure]
+    - Gaps: [missing sections or topics]
+    - Redundancies: [repetitive content]
+    
+    ### Content Quality Assessment by Section
+    [For each major section:]
+    - Section: [name]
+    - Quality Rating: [X/10]
+    - Strengths: [what works]
+    - Weaknesses: [what needs improvement]
+    - Action Required: [preserve/enhance/rewrite/expand]
+    
+    ### Source & Citation Review
+    - Strong Citations: [list]
+    - Weak/Missing Citations: [claims needing sources]
+    - Outdated Sources: [sources to update]
+    - Source Quality Issues: [low-authority sources to replace]
+    
+    ### Audience Alignment
+    - Appropriate for {audience}: [Yes/Partially/No]
+    - Technical Level: [assessment]
+    - Pain Points Addressed: [covered vs missing]
+    - Value Proposition: [clear/unclear/missing]
+    
+    ### Competitive Position
+    - vs Top Competitors: [stronger/comparable/weaker]
+    - Unique Angles: [differentiators]
+    - Missing Opportunities: [what competitors cover better]
+    
+    ## 3. ENHANCEMENT RESEARCH FINDINGS
+    
+    ### Data & Statistics to Add
+    [5-10 new statistics with sources and placement suggestions]
+    
+    ### Expert Perspectives to Incorporate
+    [3-5 expert quotes/insights with attribution and purpose]
+    
+    ### Examples & Case Studies to Add
+    [2-4 examples with descriptions, sources, and placement]
+    
+    ### New Angles/Sections to Consider
+    [Topics to add with justification]
+    
+    ### Better Sources for Existing Claims
+    [Weak sources and stronger replacements]
+    
+    ## 4. SEO FOUNDATION
+    - Primary Keyword: [keyword with volume/competition/intent]
+    - Secondary Keywords: [5-7 keywords]
+    - LSI Keywords: [10-15 terms]
+    - Featured Snippet Opportunity: [yes/no with strategy]
+    - Current Draft Keyword Usage: [assessment]
+    
+    ## 5. PRESERVATION NOTES
+    - Keep These Elements: [strong quality sections]
+    - Need Minor Enhancement: [sections with specific improvements]
+    - Need Major Revision: [sections requiring rewrite]
+    
+    ## 6. ENHANCEMENT STRATEGY
+    - Approach: [light/moderate/significant revision]
+    - Priority Actions: [top 3 improvements]
+    - Expected Outcome: [what enhanced version will achieve]
+    
+    **CREATION MODE OUTPUT** (if no initial_draft):
+    
+    # Comprehensive Research Report
+    
+    ## 1. EXECUTIVE SUMMARY
+    - Key Insights: [3-5 bullet points]
+    - Recommended Unique Angle: [differentiated approach]
+    - Primary Audience Pain Points: [top 3-5 challenges]
+    
+    ## 2. TOPIC INTELLIGENCE
+    
+    ### Current Trends & Statistics
+    [8-10 key data points with sources]
+    
+    ### Expert Perspectives
+    [3-5 expert quotes/insights with attribution]
+    
+    ### Recent Developments
+    [3-5 developments with significance]
+    
+    ### Common Misconceptions
+    [2-3 misconceptions with corrections]
+    
+    ## 3. COMPETITIVE ANALYSIS
+    - Top Competitor Content: [3-5 pieces with analysis]
+    - Content Gaps We Can Fill: [3-5 opportunities]
+    - Successful Structures: [patterns that work]
+    - Our Differentiators: [how to stand out]
+    
+    ## 4. SEO FOUNDATION
+    - Primary Keyword: [keyword with metrics]
+    - Secondary Keywords: [5-7 keywords]
+    - LSI Keywords: [10-15 terms]
+    - Featured Snippet Strategy: [approach]
+    
+    ## 5. CONTENT BUILDING BLOCKS
+    - Statistics (minimum 5): [with sources and relevance]
+    - Expert Quotes (minimum 3): [with context]
+    - Case Studies/Examples (minimum 2): [with purpose]
+    
+    ## 6. CREDIBLE SOURCES
+    [All sources with URLs, dates, and key findings]
+  
+  agent: content_researcher
+
+# -----------------------------------------------------------------------------
+# TASK 2: BRAND VOICE ANALYSIS & VALIDATION
+# Purpose: Extract or validate client's brand voice patterns
+# Agent: brand_voice_specialist
+# Dependencies: content_research_task
+# -----------------------------------------------------------------------------
+brand_voice_analysis_task:
+  description: >
+    Analyze {client_name}'s brand voice and generate AI Language Code parameters
+    for creating {content_type} content on {topic} targeting {audience}.
+    
+    This task operates identically in both CREATION and REVISION modes. Brand
+    voice parameters apply whether writing from scratch or enhancing existing content.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    ## YOUR RESPONSIBILITIES:
+    
+    ### 1. BRAND VOICE FOUNDATION
+    
+    Extract brand voice characteristics from available inputs:
+    - AI Language Code guidelines: {ai_language_code}
+    - Any brand voice documentation provided in inputs
+    - Client positioning and audience information
+    - Content type and topic requirements
+    
+    If minimal brand information is provided, create brand voice specification
+    based on industry best practices for {audience} and {content_type}.
+    
+    ### 2. STYLOMETRIC ANALYSIS
+    
+    Define precise parameters for:
+    - Tone characteristics (authoritative, empathetic, professional, etc.)
+    - Vocabulary sophistication level (1-5 scale)
+    - Sentence structure complexity patterns (1-5 scale)
+    - Paragraph length preferences
+    - Use of figurative language (1-5 scale)
+    - Technical terminology usage
+    - Formality level (1-5 scale)
+    - Target reading level (Flesch-Kincaid score)
+    
+    ### 3. AI LANGUAGE CODE GENERATION
+    
+    Create or validate:
+    - Tone codes and intensity levels (e.g., /TN/A3,EMP4)
+    - Vocabulary level (/VL1-5)
+    - Sentence complexity (/SC1-5)
+    - Figurative language frequency (/FL1-5)
+    - Language formality (/LF1-5)
+    - Other relevant parameters
+    
+    ### 4. CONTENT TYPE ADAPTATION
+    
+    Ensure parameters are appropriate for:
+    - The specific {content_type} format
+    - The {audience} audience expectations
+    - The {topic} subject matter complexity
+    
+    ### 5. STYLE GUIDE CREATION
+    
+    Document clear guidelines including:
+    - Preferred and prohibited vocabulary
+    - Sentence structure examples
+    - Tone consistency rules
+    - Formatting requirements
+    - Citation and attribution standards
+    
+    ### 6. MODE-SPECIFIC GUIDANCE
+    
+    **For REVISION mode** (when initial_draft exists):
+    - Analyze existing draft for voice consistency
+    - Identify specific deviations from ideal brand voice
+    - Provide targeted recommendations for voice alignment
+    - Note which sections already match brand voice well
+    
+    **For CREATION mode**:
+    - Provide comprehensive voice specification for writers
+    - Include extensive examples and guidance
+    - Create detailed Do's and Don'ts
+    
+  expected_output: >
+    A comprehensive brand voice specification in markdown format:
+    
+    # Brand Voice Specification for {client_name}
+    
+    **1. AI LANGUAGE CODE STRING**
+    
+    {ai_language_code}
+    
+    **2. CODE PARAMETERS EXPLAINED**
+    
+    **Tone**:
+    - Primary: [Tone name] (Level X/5) - [Description]
+    - Secondary: [Tone name] (Level X/5) - [Description]
+    - Tertiary: [Tone name] (Level X/5) - [Description]
+    
+    **Vocabulary Level**: X/5 - [Description]
+    Example: "4/5 - Advanced professional vocabulary with industry terminology"
+    
+    **Sentence Complexity**: X/5 - [Description]
+    Example: "3/5 - Mix of simple and compound sentences, occasional complex"
+    
+    **Figurative Language**: X/5 - [Description]
+    Example: "2/5 - Minimal metaphors, focusing on clarity"
+    
+    **Language Formality**: X/5 - [Description]
+    Example: "3/5 - Professional but approachable"
+    
+    **3. VOICE CHARACTERISTICS SUMMARY**
+    
+    [2-3 sentences describing overall voice profile]
+    - Key differentiators from competitors
+    - Target reading level (e.g., "Grade 12-14, Flesch-Kincaid 50-60")
+    
+    **4. DO'S AND DON'TS**
+    
+    **DO:**
+    [5-7 specific writing guidelines]
+    - Use active voice in 80%+ of sentences
+    - Include data-driven statements with citations
+    - [Continue...]
+    
+    **DON'T:**
+    [5-7 prohibited practices]
+    - Avoid buzzwords like 'synergy' or 'leverage'
+    - Never use exclamation points except in quotes
+    - [Continue...]
+    
+    **5. EXAMPLE SENTENCES**
+    
+    [3-5 example sentences that embody the brand voice, each with annotation]
+    
+    **6. CONTENT TYPE SPECIFIC ADAPTATIONS**
+    
+    - Adjustments for {content_type} format
+    - Considerations for {audience} audience
+    - Adaptations for {topic} subject matter
+    
+    **7. MODE-SPECIFIC NOTES**
+    
+    **Workflow Mode: {workflow_mode}**
+    
+    [If REVISION mode:]
+    - Draft voice analysis: [assessment]
+    - Sections matching voice well: [list]
+    - Sections needing voice adjustment: [list with specifics]
+    - Priority voice corrections: [top 3-5]
+    
+    [If CREATION mode:]
+    - Complete voice guidelines provided above
+    - Apply consistently throughout all sections
+    - Refer to examples for voice reference
+  
+  agent: brand_voice_specialist
+
+# -----------------------------------------------------------------------------
+# TASK 3: CONTENT STRATEGY (MODE-ADAPTIVE)
+# Purpose: Create outline OR refinement strategy
+# Agent: content_strategist
+# Dependencies: content_research_task, brand_voice_analysis_task
+# -----------------------------------------------------------------------------
+content_strategy_task:
+  description: >
+    Create comprehensive content strategy for {client_name}'s {content_type}
+    on {topic} targeting {audience}.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    Your strategy adapts based on workflow mode:
+    
+    **IF REVISION MODE** (initial_draft provided):
+    Create a comprehensive strategy for enhancing the existing draft into
+    exceptional, publication-ready content.
+    
+    REVISION MODE STRATEGY:
+    
+    1. ANALYSIS INTEGRATION
+       - Review draft analysis from research task
+       - Identify sections to preserve as-is (strong quality)
+       - Note sections requiring enhancement
+       - Plan sections needing complete rewrite
+       - Determine what new content to add
+       - Decide what to remove or consolidate
+    
+    2. STRUCTURAL REFINEMENT PLAN
+       - Document existing outline/structure
+       - Evaluate if current structure works
+       - Recommend restructuring if needed
+       - Show improved section order if applicable
+       - Add missing sections identified in research
+       - Consolidate redundant sections
+       - Improve heading hierarchy
+       - Plan smooth transitions
+    
+    3. CONTENT ENHANCEMENT STRATEGY BY SECTION
+       For each section:
+       - Action: [preserve/enhance/rewrite/remove/restructure]
+       - Current Quality Rating: X/10
+       - Target Quality Rating: Y/10
+       - Enhancement Approach: [specific strategy]
+       - Key Improvements Needed: [details]
+       - Research Elements to Add: [statistics, quotes, examples]
+       - Brand Voice Adjustments: [tone/style changes]
+    
+    4. CONTENT ADDITIONS PLAN
+       - New sections to add with placement and purpose
+       - Internal linking strategy
+       - Links to keep, add, and optimize
+    
+    5. QUALITY ELEVATION TACTICS
+       - Strengthen weak arguments
+       - Add missing evidence
+       - Improve examples
+       - Update outdated information
+       - Enhance specificity
+    
+    6. BRAND VOICE ALIGNMENT STRATEGY
+       - Current voice issues from draft
+       - Tone adjustments needed
+       - Vocabulary elevations
+       - Sentence structure changes
+       - Style consistency fixes
+    
+    7. SEO OPTIMIZATION STRATEGY
+       - Keyword integration plan
+       - On-page SEO improvements
+       - H1 and heading enhancements
+       - Meta elements to create
+    
+    8. COMPETITIVE DIFFERENTIATION
+       - How enhanced version will excel
+       - Gaps to cover
+       - Unique insights to add
+       - Superior evidence to include
+    
+    **IF CREATION MODE** (no initial_draft):
+    Create comprehensive content strategy and detailed outline for creating
+    content from scratch.
+    
+    CREATION MODE STRATEGY:
+    
+    1. RESEARCH INTEGRATION
+       - Select most compelling angle
+       - Choose statistics, quotes, examples to include
+       - Determine optimal content depth
+       - Plan internal linking opportunities
+    
+    2. CONTENT TEMPLATE SELECTION
+       - Select appropriate template for {content_type}
+       - Customize template sections for {topic}
+    
+    3. DETAILED OUTLINE CREATION
+       - H1 headline (incorporating primary keyword)
+       - H2 and H3 subheadings (logical hierarchy)
+       - Section-by-section content flow
+       - Placement of statistics, quotes, examples
+       - Internal link anchor text and destinations
+       - CTA placement and messaging
+       - Image/visual recommendations
+    
+    4. SEO INTEGRATION
+       - Primary keyword in H1 and first 150 words
+       - Secondary keywords in H2/H3 headings
+       - LSI keywords distributed naturally
+       - Featured snippet optimization strategy
+       - Meta title and description
+    
+    5. BRAND VOICE ALIGNMENT
+       - Apply approved AI Language Code
+       - Note tone requirements per section
+       - Specify vocabulary expectations
+       - Include style reminders
+    
+    6. AUDIENCE OPTIMIZATION
+       - Address pain points in priority order
+       - Include audience-appropriate examples
+       - Match depth to expertise level
+       - Plan CTAs for journey stage
+    
+    7. COMPETITIVE DIFFERENTIATION
+       - Cover competitor content gaps
+       - Take unique angle
+       - Include exclusive insights
+       - Provide superior value
+    
+  expected_output: >
+    A comprehensive content strategy document in markdown format:
+    
+    **REVISION MODE OUTPUT** (if initial_draft provided):
+    
+    # Content Enhancement Strategy Document
+    
+    ## 1. STRATEGY OVERVIEW
+    - Enhancement Approach: [Light/Moderate/Significant]
+    - Estimated Work Required: [hours/effort]
+    - Key Transformation Goal: [what we're achieving]
+    - Current State: [assessment]
+    - Target State: [desired outcome]
+    - Primary Focus Areas: [top 3-5 priorities]
+    
+    ## 2. STRUCTURAL ENHANCEMENT PLAN
+    
+    ### Current Structure
+    [Outline of existing draft]
+    
+    ### Proposed Enhanced Structure
+    [Complete outline with all changes noted]
+    
+    **Major Structural Changes:**
+    [List changes with rationale]
+    
+    ## 3. SECTION-BY-SECTION ENHANCEMENT PLAN
+    
+    [For each section:]
+    - Section: [name]
+    - Current Quality: X/10
+    - Action: [preserve/enhance/rewrite]
+    - What to Preserve: [specifics]
+    - What to Improve: [specifics]
+    - Specific Changes: [detailed list]
+    - Target Quality: Y/10
+    
+    ## 4. CONTENT ADDITIONS PLAN
+    
+    ### New Sections to Add
+    [Each new section with placement, purpose, key points, length, voice notes]
+    
+    ### Elements to Integrate Throughout
+    - Statistics to Add: [with placement]
+    - Expert Perspectives: [with placement]
+    - Examples & Case Studies: [with placement]
+    
+    ## 5. QUALITY ELEVATION SPECIFICS
+    
+    ### Weak Claims to Strengthen
+    [Current → Enhanced versions with locations]
+    
+    ### Generic Statements to Specify
+    [Current → Improved versions with locations]
+    
+    ### Transitions to Improve
+    [Specific transition improvements]
+    
+    ## 6. BRAND VOICE ALIGNMENT STRATEGY
+    - Current Voice Deviations: [list with corrections]
+    - Correction Approach: [specific guidance]
+    - AI Language Code Reminder: {ai_language_code}
+    
+    ## 7. SEO OPTIMIZATION STRATEGY
+    - Current Keyword Usage: [assessment]
+    - Optimization Plan: [H1, introduction, headings]
+    - Meta Elements to Create: [title, description, URL]
+    - Internal Linking Enhancements: [specific links]
+    
+    ## 8. COMPETITIVE DIFFERENTIATION
+    - How Enhanced Version Will Excel: [5 ways]
+    - Positioning Strategy: [angle and unique value]
+    
+    ## 9. PRESERVATION NOTES
+    - Elements to Keep Exactly: [list]
+    - Minor Edits Only: [list]
+    
+    ## 10. SUCCESS METRICS
+    - Word count: [current] → [target]
+    - Quality score: [current] → [target]
+    - Unique value vs competitors: [assessment]
+    
+    **CREATION MODE OUTPUT** (if no initial_draft):
+    
+    # Detailed Content Outline & Strategy
+    
+    **1. CONTENT STRATEGY OVERVIEW**
+    - Unique Angle: [differentiated approach]
+    - Target Audience: {audience}
+    - Primary pain points: [3-5 items]
+    - Expertise level: [beginner/intermediate/advanced]
+    - Primary Goal: [main objective]
+    - Secondary Goals: [additional objectives]
+    - Content Template: [template being used]
+    - Estimated Word Count: [range]
+    
+    **2. SEO STRATEGY**
+    - Primary Keyword: [keyword with intent/volume/difficulty]
+    - Secondary Keywords: [5-7 with placement plan]
+    - LSI Keywords: [list with integration points]
+    - Featured Snippet Strategy: [approach or N/A]
+    - Meta Title (50-60 chars): [optimized title]
+    - Meta Description (150-160 chars): [compelling description]
+    
+    **3. DETAILED CONTENT OUTLINE**
+    
+    **[H1] [Compelling Headline with Primary Keyword]**
+    - AI Language Code reminder: {ai_language_code}
+    - Hook strategy: [approach]
+    - Primary keyword: first 50 words
+    
+    **Introduction** (150-200 words)
+    - Hook: [specific approach]
+    - Context: [2-3 sentences]
+    - Value proposition: [what reader gains]
+    - Primary keyword usage: [specific placement]
+    - Internal link: [page with anchor text]
+    
+    **[H2] [Section 1 Heading with Secondary Keyword]**
+    
+    **[H3] [Subsection 1.1]** (200-300 words)
+    - Key points: [bullet list]
+    - Statistic: [specific stat from research]
+    - Example: [case study or scenario]
+    - Voice note: [tone guidance]
+    
+    [Continue with all H2/H3 sections - typically 4-6 main sections]
+    
+    **[H2] [Final Section / Conclusion with CTA]**
+    - Summary approach: [forward-looking]
+    - Connection to offerings: [how to position]
+    - CTA messaging: [specific action]
+    - CTA button text: "[action-oriented text]"
+    
+    **4. CONTENT ENHANCEMENT ELEMENTS**
+    
+    **Internal Links** (3-5 strategic placements):
+    [Each with location, destination, and anchor text]
+    
+    **Statistics & Data** (minimum 5):
+    [Each with source and placement]
+    
+    **Expert Quotes** (minimum 2-3):
+    [Each with attribution and placement]
+    
+    **Examples/Case Studies** (minimum 2):
+    [Each with description, placement, and purpose]
+    
+    **Visual Recommendations**:
+    [Header image, section images, charts/graphs]
+    
+    **5. BRAND VOICE GUIDELINES FOR WRITER**
+    - Primary tone: [tone with intensity]
+    - Sentence complexity: [guidance]
+    - Vocabulary level: [guidance]
+    - Style reminders: [3-5 key points]
+    
+    **6. QUALITY CHECKPOINTS**
+    [Checklist of requirements for writer]
+  
+  agent: content_strategist
+  context:
+    - content_research_task
+    - brand_voice_analysis_task
+
+# -----------------------------------------------------------------------------
+# TASK 4: CONTENT GENERATION (MODE-ADAPTIVE)
+# Purpose: Write OR enhance content
+# Agent: content_writer
+# Dependencies: All previous tasks
+# -----------------------------------------------------------------------------
+content_generation_task:
+  description: >
+    Create or enhance {content_type} content on {topic} for {client_name}
+    targeting {audience}.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    Your approach adapts based on workflow mode:
+    
+    **IF REVISION MODE** (initial_draft provided):
+    Transform the existing draft into exceptional, publication-ready content.
+    
+    ORIGINAL DRAFT: {initial_draft}
+    Draft Statistics: {draft_word_count} words, {draft_length} characters
+    
+    REVISION MODE APPROACH:
+    
+    1. FOLLOW THE ENHANCEMENT STRATEGY
+       - Preserve sections marked as "keep as-is"
+       - Enhance sections marked for improvement
+       - Completely rewrite sections marked for rewrite
+       - Add all new sections as specified
+       - Implement all structural changes
+    
+    2. APPLY BRAND VOICE PARAMETERS
+       - Reference AI Language Code: {ai_language_code}
+       - Match tone characteristics and intensity
+       - Use vocabulary at specified level
+       - Apply sentence complexity patterns
+       - Include figurative language appropriately
+       - Maintain consistent formality level
+       - Fix all brand voice deviations
+    
+    3. PRESERVE QUALITY CONTENT
+       - DO NOT needlessly rewrite sections that work
+       - Keep quality sections exactly as written
+       - Only make minimal edits for flow/consistency
+       - Respect quality writing that's already there
+    
+    4. ENHANCE WITH EXCELLENCE
+       - Integrate statistics from research
+       - Add expert quotes as specified
+       - Include case studies and examples
+       - Cite all sources properly
+       - Replace vague statements with specific claims
+       - Add concrete data where generic
+       - Strengthen weak arguments
+       - Improve clarity of confusing sections
+       - Add depth where shallow
+       - Smooth transitions between sections
+       - Ensure logical progression
+    
+    5. REWRITE SECTIONS STRATEGICALLY
+       - Preserve good core ideas/structure
+       - Completely rework weak writing
+       - Apply brand voice from scratch
+       - Meet enhanced quality standards
+       - Incorporate all research findings
+    
+    6. ADD NEW CONTENT
+       - Write from scratch following specifications
+       - Match tone and voice of enhanced sections
+       - Integrate seamlessly with existing content
+       - Meet target word counts
+       - Include all specified elements
+    
+    7. OPTIMIZE FOR SEO
+       - Implement keyword optimization plan
+       - Add primary keyword to H1 if needed
+       - Integrate secondary keywords in H2s
+       - Weave LSI keywords naturally
+       - Implement all internal linking changes
+       - Ensure natural keyword density
+    
+    8. MAINTAIN AUTHENTICITY
+       - Enhanced content should feel cohesive
+       - Match style throughout
+       - Keep it human and engaging
+       - No forced optimization
+    
+    9. FORMAT FOR READABILITY
+       - Short paragraphs (3-5 sentences)
+       - Bullet points and lists where appropriate
+       - Bold key concepts
+       - Descriptive subheadings
+       - Visual white space
+    
+    **IF CREATION MODE** (no initial_draft):
+    Write compelling, high-quality content from scratch following the approved
+    content outline.
+    
+    CREATION MODE APPROACH:
+    
+    1. FOLLOW THE OUTLINE PRECISELY
+       - Implement every H1, H2, H3 heading exactly
+       - Cover all key points for each section
+       - Place statistics, quotes, examples as directed
+       - Include internal links with exact anchor text
+       - Meet target word counts for each section
+    
+    2. APPLY AI LANGUAGE CODE PARAMETERS
+       - Reference approved brand voice: {ai_language_code}
+       - Match tone characteristics and intensity
+       - Use vocabulary at specified level
+       - Apply sentence complexity patterns
+       - Include figurative language appropriately
+       - Maintain consistent formality level
+    
+    3. WRITE WITH EXCELLENCE
+       - Open with compelling hook
+       - Flow logically with smooth transitions
+       - Use active voice in 80%+ of sentences
+       - Vary sentence length for readability
+       - Include specific, concrete examples
+       - Break complex ideas into digestible explanations
+       - Show rather than tell
+    
+    4. OPTIMIZE FOR SEO
+       - Primary keyword in H1, introduction, throughout
+       - Secondary keywords in designated headings
+       - LSI keywords woven naturally
+       - Keyword density feels natural
+       - Write for humans first
+    
+    5. PROVIDE VALUE AND ORIGINALITY
+       - Offer insights beyond competitors
+       - Include actionable takeaways
+       - Support claims with credible sources
+       - Cite statistics and quotes accurately
+       - Provide fresh perspectives
+       - Avoid generic filler
+    
+    6. ADDRESS THE AUDIENCE
+       - Use language {audience} relates to
+       - Address their pain points empathetically
+       - Match information depth to expertise
+       - Anticipate and answer questions
+       - Guide toward helpful next steps
+    
+    7. FORMAT FOR READABILITY
+       - Short paragraphs (3-5 sentences)
+       - Bullet points and lists appropriately
+       - Bold key concepts
+       - Descriptive subheadings
+       - White space for comfort
+    
+    8. INCLUDE STRATEGIC CTAS
+       - In introduction if appropriate
+       - At natural transition points
+       - In conclusion
+       - Action-oriented, benefit-focused
+       - Helpful, not salesy
+    
+    9. MAINTAIN BRAND CONSISTENCY
+       - Use client's terminology
+       - Reference client expertise naturally
+       - Align with positioning and values
+       - Follow specific style guidelines
+    
+    10. SELF-EDIT BEFORE SUBMISSION
+        - Remove filler and redundancy
+        - Tighten weak phrasing
+        - Verify facts and citations
+        - Check internal link accuracy
+        - Ensure tone consistency
+        - Confirm outline compliance
+    
+  expected_output: >
+    Complete content draft in markdown format with comprehensive documentation:
+    
+    **REVISION MODE OUTPUT** (if initial_draft provided):
+    
+    # Enhanced Content Draft
+    
+    **META INFORMATION:**
+    - Content Type: {content_type}
+    - Topic: {topic}
+    - Client: {client_name}
+    - Target Audience: {audience}
+    - Workflow Mode: Revision
+    - AI Language Code: {ai_language_code}
+    - Original Length: {draft_length} characters
+    - Enhanced Length: [new character count]
+    - Word Count: [actual count]
+    - Primary Keyword: [keyword]
+    - Enhancement Level: [Light/Moderate/Significant]
+    
+    **COMPLETE ENHANCED CONTENT:**
+    
+    # [H1 Headline]
+    
+    [Full enhanced content with preserved, enhanced, rewritten, and new sections]
+    
+    ---
+    
+    **ENHANCEMENT DOCUMENTATION:**
+    
+    **Sections Preserved:**
+    [List all content kept as-is]
+    
+    **Sections Enhanced:**
+    [Detail all enhancements made]
+    
+    **Sections Completely Rewritten:**
+    [Detail all rewrites with justification]
+    
+    **New Sections Added:**
+    [List all additions]
+    
+    **Research Integration:**
+    - Statistics added: [X] with citations
+    - Expert perspectives: [X] integrated
+    - Case studies: [X] included
+    - Internal links: [X] implemented
+    
+    **SEO Improvements:**
+    - H1 optimization: [changes]
+    - Keyword integration: [improvements]
+    - Internal links added: [X] with anchors
+    
+    **Brand Voice Corrections:**
+    - Tone adjustments: [details]
+    - Vocabulary elevations: [details]
+    - Sentence structure improvements: [details]
+    
+    **Quality Improvements:**
+    - Generic statements replaced: [X]
+    - Statistics updated: [X]
+    - Arguments strengthened: [X]
+    - Clarity improvements: [X]
+    
+    **Sources Referenced:**
+    [All new sources with URLs and dates]
+    
+    **CREATION MODE OUTPUT** (if no initial_draft):
+    
+    # Complete Content Draft
+    
+    **META INFORMATION:**
+    - Content Type: {content_type}
+    - Topic: {topic}
+    - Client: {client_name}
+    - Target Audience: {audience}
+    - Workflow Mode: Creation
+    - AI Language Code: {ai_language_code}
+    - Word Count: [actual count]
+    - Primary Keyword: [keyword]
+    - Secondary Keywords: [list]
+    
+    **FULL CONTENT:**
+    
+    # [H1 Headline]
+    
+    [Introduction with hook and value proposition]
+    
+    ## [H2 Section 1 Heading]
+    
+    [Section content with statistics, quotes, examples, links as specified]
+    
+    ### [H3 Subsection if applicable]
+    
+    [Subsection content]
+    
+    [Continue for all sections per outline]
+    
+    ## [H2 Final Section with CTA]
+    
+    [Conclusion and clear call-to-action]
+    
+    ---
+    
+    **WRITER'S NOTES:**
+    
+    **Outline Adherence:**
+    - All sections completed: [Yes/No]
+    - All elements included: [Yes/No]
+    - Deviations: [list with justification]
+    
+    **Brand Voice Application:**
+    - Tone consistency: [self-assessment]
+    - Vocabulary level: [confirmation]
+    - Challenging sections: [notes]
+    
+    **SEO Integration:**
+    - Primary keyword count: [number]
+    - Secondary keyword coverage: [confirmation]
+    - Internal links: [count and locations]
+    
+    **Value Additions:**
+    - Unique insights: [brief list]
+    - Competitive differentiation: [how content exceeds]
+    
+    **Sources Referenced:**
+    [All sources with URLs and access dates]
+  
+  agent: content_writer
+  context:
+    - content_research_task
+    - brand_voice_analysis_task
+    - content_strategy_task
+
+# -----------------------------------------------------------------------------
+# TASK 5: SEO OPTIMIZATION & ENHANCEMENT
+# Purpose: Enhance content for search performance
+# Agent: seo_specialist
+# Dependencies: content_generation_task
+# -----------------------------------------------------------------------------
+seo_optimization_task:
+  description: >
+    Optimize {client_name}'s {content_type} content on {topic} for maximum
+    search engine performance while maintaining brand voice and readability.
+    
+    This task operates identically in both CREATION and REVISION modes. SEO
+    optimization applies the same way to newly created or enhanced content.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    Your optimization must:
+    
+    1. KEYWORD OPTIMIZATION ANALYSIS
+       - Verify primary keyword in critical locations (H1, URL, first 150 words)
+       - Check secondary keyword integration in H2/H3 headings
+       - Ensure LSI keywords distributed naturally
+       - Calculate keyword density (target 1-2%)
+       - Identify opportunities for keyword variations
+    
+    2. ON-PAGE SEO ELEMENTS
+       - Review and optimize H1 (include primary keyword, under 60 chars)
+       - Ensure proper heading hierarchy (H1 → H2 → H3)
+       - Verify internal link implementation (3-5 minimum)
+       - Recommend URL slug (short, keyword-rich, readable)
+       - Craft meta title (50-60 chars with primary keyword)
+       - Write meta description (150-160 chars with keyword + CTA)
+       - Suggest image alt text (descriptive, keyword-relevant)
+    
+    3. CONTENT STRUCTURE OPTIMIZATION
+       - Ensure proper paragraph length (3-5 sentences)
+       - Verify white space and visual hierarchy
+       - Confirm bullet points and lists for scannability
+       - Check key information appears above the fold
+       - Assess table of contents need
+    
+    4. FEATURED SNIPPET OPTIMIZATION
+       - Identify snippet opportunity
+       - Recommend formatting for snippet capture
+       - Suggest specific section to optimize
+    
+    5. READABILITY ASSESSMENT
+       - Calculate Flesch Reading Ease score
+       - Verify grade level appropriate for {audience}
+       - Check sentence length variation
+       - Assess transition words usage
+       - Confirm active voice usage (target 80%+)
+    
+    6. INTERNAL LINKING STRATEGY
+       - Verify all planned internal links implemented
+       - Ensure anchor text is descriptive and keyword-rich
+       - Confirm links add value
+       - Suggest additional linking opportunities
+    
+    7. EXTERNAL LINK OPTIMIZATION
+       - Verify all sources cited with links
+       - Check external link quality
+       - Ensure no broken links
+       - Add nofollow to commercial links if needed
+    
+    8. CONTENT QUALITY SIGNALS
+       - Verify comprehensive topic coverage
+       - Confirm substantive content (not thin)
+       - Check content currency
+       - Ensure expertise indicators present
+       - Verify content serves search intent
+    
+    9. TECHNICAL SEO CONSIDERATIONS
+       - Recommend image optimization
+       - Suggest schema markup opportunities
+       - Note crawlability concerns
+       - Recommend canonical URL
+    
+    10. CREATE SEO ENHANCEMENT RECOMMENDATIONS
+        - Prioritize changes (high/medium/low impact)
+        - Provide specific, actionable edits
+        - Explain rationale for each
+        - Balance SEO with readability and voice
+        - Never sacrifice quality for keywords
+    
+  expected_output: >
+    Comprehensive SEO optimization report with enhanced content:
+    
+    # SEO Optimization Report
+    
+    **1. SEO ANALYSIS SUMMARY**
+    
+    - Overall SEO Score: [X/100]
+    - Keyword Optimization: [status]
+    - On-Page SEO Elements: [status]
+    - Content Quality Metrics: [scores]
+    - Featured Snippet Opportunity: [Yes/No]
+    
+    **2. CRITICAL OPTIMIZATIONS** (High Impact)
+    [List critical issues with specific fixes]
+    
+    **3. RECOMMENDED ENHANCEMENTS** (Medium-High Impact)
+    
+    1. Meta Title Optimization
+       - Recommended: "[optimized title 50-60 chars]"
+       - Impact: High
+    
+    2. Meta Description Enhancement
+       - Recommended: "[compelling description 150-160 chars]"
+       - Impact: High
+    
+    3. URL Slug Suggestion
+       - Recommended: /[keyword-rich-slug]/
+       - Impact: Medium
+    
+    4. Featured Snippet Optimization
+       - Section: [name]
+       - Format: [type]
+       - Implementation: [instructions]
+       - Impact: High
+    
+    5. Internal Linking Additions
+       [List with locations, destinations, anchor text]
+       - Impact: Medium
+    
+    6. Heading Optimization
+       [Current vs optimized versions]
+       - Impact: Medium
+    
+    **4. OPTIONAL ENHANCEMENTS** (Low-Medium Impact)
+    [Additional improvements]
+    
+    **5. IMAGE SEO RECOMMENDATIONS**
+    - Primary Image: [filename, alt text, optimization]
+    - Section Images: [list with alt text]
+    
+    **6. SCHEMA MARKUP OPPORTUNITIES**
+    [Recommended schema types]
+    
+    **7. COMPETITIVE SEO ANALYSIS**
+    [Comparison table with top competitors]
+    
+    **8. READABILITY OPTIMIZATION**
+    - Current: [scores]
+    - Recommendations: [if improvements needed]
+    
+    **9. TECHNICAL SEO CHECKLIST**
+    - Canonical URL: [URL]
+    - Robots meta: index, follow
+    - XML sitemap: Required
+    - Open Graph/Twitter Card: Recommended
+    
+    **10. FULLY OPTIMIZED CONTENT**
+    [Complete content with all optimizations implemented]
+    
+    **Changes Made:**
+    [List of specific changes]
+    
+    **FINAL RECOMMENDATIONS FOR PUBLICATION:**
+    
+    **Before Publishing:**
+    - Implement meta title/description in CMS
+    - Set URL slug
+    - Add schema markup
+    - Optimize images
+    - Test internal links
+    - Review on mobile
+    - Check page load speed
+    
+    **After Publishing:**
+    - Submit to Google Search Console
+    - Monitor rankings
+    - Track click-through rates
+    - Analyze engagement metrics
+    - Update quarterly
+  
+  agent: seo_specialist
+  context:
+    - content_research_task
+    - content_strategy_task
+    - content_generation_task
+
+# -----------------------------------------------------------------------------
+# TASK 6: STYLE COMPLIANCE VERIFICATION
+# Purpose: Verify brand voice adherence and consistency
+# Agent: style_compliance_agent
+# Dependencies: seo_optimization_task
+# -----------------------------------------------------------------------------
+style_compliance_review_task:
+  description: >
+    Conduct comprehensive brand voice and style compliance review of the
+    SEO-optimized {content_type} content for {client_name}.
+    
+    This task operates identically in both CREATION and REVISION modes. Brand
+    voice compliance is verified the same way regardless of content origin.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    Your review must verify:
+    
+    1. AI LANGUAGE CODE COMPLIANCE
+       - Compare content against approved AI Language Code parameters
+       - Verify tone characteristics match specified levels
+       - Check vocabulary sophistication aligns
+       - Assess sentence complexity patterns
+       - Confirm figurative language frequency
+       - Evaluate formality level consistency
+    
+    2. BRAND VOICE CONSISTENCY ANALYSIS
+       - Review against approved brand voice specification
+       - Identify sections that drift from voice
+       - Check tone consistency throughout
+       - Verify vocabulary aligns with brand usage
+       - Ensure brand-specific terminology correct
+       - Confirm adherence to Do's and Don'ts
+    
+    3. STYLE GUIDELINES VERIFICATION
+       - Check grammar and punctuation per client preferences
+       - Verify formatting consistency
+       - Confirm citation and attribution format
+       - Review capitalization and hyphenation
+       - Check acronym and abbreviation handling
+       - Verify proper names and terminology spelling
+    
+    4. SENTENCE-LEVEL ANALYSIS
+       - Sample 10-15 sentences across sections
+       - Analyze for tone, vocabulary, complexity
+       - Score adherence to brand voice (1-5 scale)
+       - Identify exemplary sentences
+       - Flag deviating sentences
+    
+    5. SECTION-BY-SECTION REVIEW
+       - Evaluate voice consistency across sections
+       - Note SEO/brand voice conflicts
+       - Identify appropriate tone shifts
+       - Check introduction and conclusion consistency
+    
+    6. PROHIBITED ELEMENTS CHECK
+       - Scan for prohibited words/phrases
+       - Check for buzzwords or jargon client avoids
+       - Verify no competitor terminology
+       - Confirm no inappropriate analogies
+    
+    7. READABILITY VS BRAND VOICE BALANCE
+       - Assess if voice compromises readability
+       - Recommend adjustments if too complex
+       - Ensure accessibility without sacrificing identity
+    
+    8. CREATE DETAILED COMPLIANCE REPORT
+       - Document all deviations with examples
+       - Provide corrected versions
+       - Explain why changes maintain SEO value
+       - Rate overall compliance level
+    
+  expected_output: >
+    Comprehensive brand voice compliance report:
+    
+    # Brand Voice Compliance Report
+    
+    **1. EXECUTIVE COMPLIANCE SUMMARY**
+    
+    - Overall Compliance Score: [X/100]
+    - Status: [Approved/Minor Issues/Significant Revisions]
+    - Tone consistency: [rating]
+    - Vocabulary alignment: [rating]
+    - Style guidelines adherence: [rating]
+    - SEO vs Brand voice balance: [rating]
+    
+    **Recommendation:**
+    - Approve as-is
+    - Approve with minor edits
+    - Requires revision
+    
+    **2. AI LANGUAGE CODE COMPLIANCE ANALYSIS**
+    
+    Target Parameters: {ai_language_code}
+    
+    **Compliance by Parameter:**
+    
+    **Tone Analysis:**
+    - Target: [tones with levels]
+    - Execution: [assessment]
+    - Score: [X/10]
+    - Examples: [compliant and non-compliant sentences]
+    
+    **Vocabulary Level:**
+    - Target: [level]
+    - Execution: [assessment]
+    - Score: [X/10]
+    - Examples: [appropriate and problematic usage]
+    
+    **Sentence Complexity:**
+    - Target: [level]
+    - Average length: [words]
+    - Distribution: [percentages]
+    - Score: [X/10]
+    
+    **Figurative Language:**
+    - Target: [level]
+    - Actual usage: [count]
+    - Score: [X/10]
+    
+    **Overall AI Language Code Compliance: [X/10]**
+    
+    **3. BRAND VOICE CONSISTENCY REVIEW**
+    
+    **Do's Compliance:**
+    [Each guideline with compliance status]
+    
+    **Don'ts Compliance:**
+    [Each prohibition with compliance status]
+    
+    **4. SECTION-BY-SECTION VOICE ANALYSIS**
+    
+    [For each section:]
+    - Voice consistency: [rating]
+    - Specific feedback: [observations]
+    - Required changes: [list or none]
+    
+    **5. STYLE GUIDELINES VERIFICATION**
+    
+    - Grammar & Punctuation: [assessment]
+    - Formatting: [assessment]
+    - Citations & Attribution: [assessment]
+    
+    **6. PROHIBITED ELEMENTS CHECK**
+    
+    - Prohibited words found: [number and list]
+    - Competitor references: [none or list]
+    - Inappropriate terminology: [none or list]
+    
+    **7. SAMPLE SENTENCE ANALYSIS**
+    
+    [10-15 sentences with detailed scoring and notes]
+    
+    **8. COMPARISON WITH BRAND SAMPLES**
+    
+    - Reference content: [list]
+    - Similarity: [percentage]
+    - Would be recognized as client: [Yes/Probably/Uncertain]
+    - Key similarities: [list]
+    - Key differences: [list]
+    
+    **9. DETAILED REVISIONS REQUIRED**
+    
+    **CRITICAL CHANGES** (must fix):
+    [Each with location, issue, current text, required change, reason]
+    
+    **RECOMMENDED CHANGES** (should fix):
+    [Medium-priority improvements]
+    
+    **OPTIONAL ENHANCEMENTS** (nice to have):
+    [Minor refinements]
+    
+    **10. SEO VS BRAND VOICE BALANCE**
+    
+    - Did SEO compromise voice: [assessment]
+    - Unnatural keyword insertions: [locations if any]
+    - Maintains authentic voice: [assessment]
+    - Recommendations: [if conflicts exist]
+    
+    **11. REVISED CONTENT WITH CORRECTIONS**
+    [Complete content with all changes implemented]
+    
+    **Summary of Changes:**
+    [Bullet list of revisions]
+    
+    **12. VALIDATION CHECKLIST FOR HUMAN REVIEWER**
+    
+    - Overall brand voice authentic and consistent
+    - AI Language Code properly executed
+    - Prohibited elements removed
+    - Style guidelines followed
+    - Critical revisions address issues
+    - SEO doesn't compromise identity
+    - Content recognizable as client's brand
+    - Tone appropriate for audience
+    - No further revisions needed
+    
+    **Final Approval:**
+    - APPROVED - Proceed to QA
+    - APPROVED WITH EDITS - [specify]
+    - REQUIRES REVISION - [specify]
+  
+  agent: style_compliance_agent
+  context:
+    - brand_voice_analysis_task
+    - content_generation_task
+    - seo_optimization_task
+
+# -----------------------------------------------------------------------------
+# TASK 7: FINAL QUALITY ASSURANCE REVIEW
+# Purpose: Comprehensive final review before publication
+# Agent: quality_assurance_editor
+# Dependencies: All previous tasks
+# -----------------------------------------------------------------------------
+final_quality_assurance_task:
+  description: >
+    Conduct comprehensive final quality assurance review of {client_name}'s
+    {content_type} content on {topic} before publication.
+    
+    This task operates identically in both CREATION and REVISION modes. Final
+    QA standards apply equally regardless of content development method.
+    
+    **WORKFLOW MODE: {workflow_mode}**
+    
+    This is the final checkpoint before content delivery. Your review must be
+    meticulous and thorough, catching remaining issues and polishing content
+    to publication-ready perfection.
+    
+    Your review must cover:
+    
+    1. FACTUAL ACCURACY VERIFICATION
+       - Verify all statistics accurate and cited
+       - Check facts against credible sources
+       - Confirm dates and numerical data current
+       - Validate expert quotes and attributions
+       - Ensure claims supported by evidence
+       - Flag unsourced assertions
+    
+    2. GRAMMAR AND MECHANICS
+       - Check spelling (including proper names)
+       - Verify grammar correctness
+       - Check punctuation
+       - Ensure subject-verb agreement
+       - Check for fragments and run-ons
+       - Verify pronoun agreement and clarity
+       - Check for homophone errors
+    
+    3. CLARITY AND READABILITY
+       - Identify confusing or ambiguous sentences
+       - Check for redundancy and wordiness
+       - Ensure smooth transitions
+       - Verify logical flow of ideas
+       - Check technical terms defined when first used
+       - Ensure examples effectively illustrate
+       - Verify conclusions follow from premises
+    
+    4. CONTENT STRUCTURE REVIEW
+       - Confirm all outline sections complete
+       - Verify heading hierarchy logical
+       - Check introduction sets expectations
+       - Ensure body delivers on promises
+       - Verify conclusion wraps up effectively
+       - Check CTAs strategically placed
+    
+    5. BRAND VOICE FINAL CHECK
+       - Confirm tone consistent throughout
+       - Verify voice aligns with approved parameters
+       - Check style compliance corrections made
+       - Ensure content authentically represents brand
+    
+    6. SEO ELEMENTS VERIFICATION
+       - Verify primary keyword in H1 and introduction
+       - Check meta title and description finalized
+       - Confirm internal links properly implemented
+       - Verify anchor text descriptive
+       - Check all links work
+       - Ensure URL slug optimized
+    
+    7. AUDIENCE APPROPRIATENESS
+       - Verify content matches {audience} expertise
+       - Check language accessible yet authoritative
+       - Ensure examples resonate with audience
+       - Verify content addresses pain points
+       - Check tone appropriate for relationship stage
+    
+    8. COMPLETENESS CHECK
+       - Confirm all required elements present
+       - Verify word count meets target
+       - Check all images have alt text
+       - Ensure all sources cited
+       - Verify CTAs clear and compelling
+    
+    9. TECHNICAL QUALITY
+       - Check markdown formatting
+       - Verify no formatting errors
+       - Ensure special characters display correctly
+       - Check list formatting consistency
+       - Verify code blocks properly formatted
+    
+    10. COMPETITIVE QUALITY ASSESSMENT
+        - Compare to top-ranking competitors
+        - Verify content provides superior value
+        - Ensure comprehensive and authoritative
+        - Check content offers unique insights
+    
+    11. FINAL POLISH
+        - Tighten remaining weak phrasing
+        - Enhance lackluster sentences
+        - Ensure powerful opening and closing
+        - Verify every sentence earns its place
+        - Remove final redundancies
+    
+    12. PUBLICATION READINESS
+        - Confirm ready for immediate publication
+        - Verify no placeholders remain
+        - Ensure reviewer comments addressed
+        - Check meets client quality standards
+    
+  expected_output: >
+    Comprehensive quality assurance report with publication-ready content:
+    
+    # Final Quality Assurance Report
+    
+    **1. EXECUTIVE QA SUMMARY**
+    
+    - Overall Quality: [Excellent/Good/Acceptable/Needs Revision]
+    - Publication Readiness: [status]
+    - Quality Scores (1-10): [all categories]
+    - Overall Quality Score: [X/10]
+    - Issues Found: Critical [X], Moderate [X], Minor [X]
+    - Estimated Time to Fix: [if issues]
+    
+    **2. FACTUAL ACCURACY REVIEW**
+    
+    **Statistics Verification:**
+    - Total statistics: [number]
+    - All properly cited: [Yes/No]
+    - All current: [Yes/No]
+    
+    **Issues Found:**
+    [List with locations, severity, corrections]
+    
+    **Sources Verification:**
+    - All credible: [Yes/No]
+    - All accessible: [Yes/No]
+    - Citation format consistent: [Yes/No]
+    
+    **3. GRAMMAR & MECHANICS REVIEW**
+    
+    - Spelling errors: [number and list]
+    - Grammar issues: [number and list]
+    - Punctuation issues: [number and list]
+    
+    **4. CLARITY & READABILITY ASSESSMENT**
+    
+    **Readability Metrics:**
+    - Flesch Reading Ease: [score]
+    - Grade level: [level]
+    - Average sentence length: [words]
+    - Passive voice: [percentage]
+    
+    **Clarity Issues:**
+    [List with locations and improvements]
+    
+    **Transition Quality:**
+    - Flow between sections: [rating]
+    - Logical progression: [rating]
+    
+    **5. CONTENT STRUCTURE REVIEW**
+    
+    **Outline Compliance:**
+    - All sections included: [Yes/No]
+    - Heading hierarchy correct: [Yes/No]
+    - Word count target met: [Yes/No, actual count]
+    
+    **Structure Assessment:**
+    - Introduction strength: [rating and details]
+    - Body content quality: [rating and details]
+    - Conclusion effectiveness: [rating and details]
+    
+    **6. BRAND VOICE FINAL VERIFICATION**
+    
+    - Tone consistent: [Yes/No]
+    - Style corrections made: [Yes/No]
+    - Matches AI Language Code: [Yes/No]
+    - Sounds like {client_name}: [rating]
+    - Would pass client review: [confidence]
+    
+    **7. SEO ELEMENTS VERIFICATION**
+    
+    **On-Page SEO Checklist:**
+    - Primary keyword in H1: [Yes/No]
+    - Keyword in first 150 words: [Yes/No]
+    - Meta title optimized: [Yes/No, text]
+    - Meta description optimized: [Yes/No, text]
+    - URL slug: [recommended]
+    - Internal links: [number implemented]
+    - All links work: [Yes/No]
+    - Anchor text descriptive: [Yes/No]
+    - Image alt text: [Yes/No]
+    - Schema markup: [recommended types]
+    
+    **Keyword Optimization:**
+    - Primary keyword density: [percentage]
+    - Secondary keywords integrated: [Yes/No]
+    - LSI keywords present: [Yes/No]
+    
+    **8. AUDIENCE APPROPRIATENESS**
+    
+    Target Audience: {audience}
+    
+    - Language complexity: [rating]
+    - Technical depth: [rating]
+    - Examples relevance: [rating]
+    - Pain points addressed: [rating]
+    - Value proposition: [rating]
+    
+    **9. COMPLETENESS VERIFICATION**
+    
+    **Required Elements Checklist:**
+    [All elements with checkboxes]
+    
+    **Missing Elements:**
+    [List if any]
+    
+    **10. COMPETITIVE QUALITY COMPARISON**
+    
+    [Table comparing to top competitors]
+    
+    **Competitive Assessment:**
+    - Exceeds competitors in: [list]
+    - On par in: [list]
+    - Could improve: [list if any]
+    - Overall Position: [Superior/Comparable/Needs Improvement]
+    
+    **11. DETAILED ISSUES LOG**
+    
+    **CRITICAL ISSUES** (must fix):
+    [Each with location, issue, current, correction, priority]
+    
+    **MODERATE ISSUES** (should fix):
+    [List]
+    
+    **MINOR ISSUES** (nice to fix):
+    [List]
+    
+    **12. FINAL POLISHING EDITS**
+    [Sentence-level improvements]
+    
+    **13. PUBLICATION-READY CONTENT**
+    [Complete final content with all corrections applied]
+    
+    **Final Word Count:** [number]
+    
+    **All Changes Implemented:**
+    [Summary of fixes]
+    
+    **14. PRE-PUBLICATION CHECKLIST**
+    
+    **Content Quality:**
+    [All checkboxes]
+    
+    **SEO Optimization:**
+    [All checkboxes]
+    
+    **Completeness:**
+    [All checkboxes]
+    
+    **Technical:**
+    [All checkboxes]
+    
+    **15. FINAL APPROVAL SECTION**
+    
+    **Senior Editor Review:**
+    
+    - Overall content quality: [X/10]
+    - Publication readiness: [status]
+    - Client satisfaction confidence: [High/Medium/Low]
+    
+    **Approval Decision:**
+    - APPROVED FOR PUBLICATION
+    - APPROVED WITH EDITS - [list]
+    - REQUIRES REVISION - [specify]
+    
+    **Final Notes:**
+    [Space for editor comments]
+    
+    **Approved By:** [Name/Role]
+    **Date:** [Date]
+    **Next Steps:** [Instructions]
+    
+    ---
+    
+    **CONGRATULATIONS!** Content has passed all quality checkpoints and is
+    ready for publication or client delivery.
+  
+  agent: quality_assurance_editor
+  context:
+    - content_research_task
+    - brand_voice_analysis_task
+    - content_strategy_task
+    - content_generation_task
+    - seo_optimization_task
+    - style_compliance_review_task
+  output_file: "content_output/{client_name}_{content_type}_{topic}_final.md"
+  create_directory: true
+
+# =============================================================================
+# END OF TASKS CONFIGURATION - CLOUD DEPLOYMENT READY
+# =============================================================================
