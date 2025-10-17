@@ -185,7 +185,7 @@ class CrewAIService:
         logger.debug(f"  - Events: {len(payload['webhooks']['events'])} subscribed")
         
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(
                     f"{self.base_url}/kickoff",
                     json=payload,
@@ -249,10 +249,10 @@ class CrewAIService:
         
         # Build payload according to CrewAI API specification
         payload = {
-            "execution_id": crewai_execution_id,
-            "task_id": task_id,
-            "human_feedback": human_feedback,
-            "is_approve": is_approve,
+            "executionId": crewai_execution_id,
+            "taskId": task_id,
+            "humanFeedback": human_feedback,
+            "isApprove": is_approve,
             
             # 🚨 CRITICAL: Re-provide webhook configurations
             # CrewAI does NOT store these from the kickoff call!
@@ -263,7 +263,7 @@ class CrewAIService:
         logger.debug("⚠️  Re-providing webhook URLs (required for continued notifications)")
         
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(
                     f"{self.base_url}/resume",
                     json=payload,

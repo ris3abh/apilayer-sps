@@ -1,5 +1,5 @@
 # api/config.py
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
@@ -54,8 +54,10 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> list:
         return [x.strip() for x in self.CORS_ORIGINS.split(',')]
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra='ignore'  # Ignore extra env vars like SERPER_API_KEY
+    )
 
 settings = Settings()
